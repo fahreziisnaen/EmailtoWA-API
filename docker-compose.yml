@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3001:3001"
+    container_name: email-forwarder
+    environment:
+      - POP3_SERVER=mail.fc-network.com
+      - POP3_PORT=110
+      - POP3_USER=bitwarden
+      - POP3_PASSWORD=T3st@pi2o24
