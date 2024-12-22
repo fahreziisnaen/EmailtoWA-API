@@ -44,14 +44,20 @@ function createConnection() {
   client.on('login', (status, rawdata) => {
     if (status) {
       console.log('Logged in to POP3 server');
-
-      // Mengecek jumlah email di inbox
-      client.stat();
+      // Mulai polling berkala
+      checkEmails(client);
     } else {
       console.error('Login failed:', rawdata);
       client.quit();
     }
   });
+
+  // Fungsi untuk mengecek email secara berkala
+  function checkEmails(client) {
+    client.stat();
+    // Jadwalkan pengecekan berikutnya tanpa perlu reconnect
+    setTimeout(() => checkEmails(client), 30000);
+  }
 
   // Event saat menerima statistik email
   client.on('stat', (status, data) => {
@@ -100,24 +106,17 @@ function createConnection() {
     }
   });
 
-  // Event saat koneksi terputus
+  // Modifikasi event close dan error
   client.on('close', () => {
-    console.log('Connection closed');
-    // Menunggu 30 detik sebelum membuat koneksi baru
-    setTimeout(() => {
-      console.log('Reconnecting...');
-      createConnection();
-    }, 30000); // 30 detik delay
+    console.log('Connection closed unexpectedly');
+    // Hanya reconnect jika koneksi terputus secara tidak diharapkan
+    setTimeout(createConnection, 5000);
   });
 
-  // Event jika terjadi error
   client.on('error', (err) => {
     console.error('POP3 Error:', err);
-    // Menunggu 30 detik sebelum mencoba koneksi ulang jika terjadi error
-    setTimeout(() => {
-      console.log('Reconnecting...');
-      createConnection();
-    }, 30000); // 30 detik delay
+    // Reconnect hanya jika terjadi error
+    setTimeout(createConnection, 5000);
   });
 }
 
