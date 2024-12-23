@@ -7,7 +7,7 @@ const IMAP_SERVER = process.env.IMAP_SERVER || '172.16.0.1';
 const IMAP_PORT = process.env.IMAP_PORT || 143;
 const IMAP_USER = process.env.IMAP_USER || 'bitwarden';
 const IMAP_PASSWORD = process.env.IMAP_PASSWORD || 'T3st@pi2o24';
-const API_URL = 'http://localhost:3000/send-message';
+const API_URL = 'http://192.168.100.117:3000/send-message';
 const RECIPIENT_ID = '120363374129473581@g.us';
 
 // Create IMAP client
