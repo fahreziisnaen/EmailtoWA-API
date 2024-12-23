@@ -5,9 +5,9 @@ services:
       - "3001:3001"
     container_name: email-forwarder
     environment:
-      - IMAP_SERVER=172.16.0.1
+      - IMAP_SERVER=your_imap_server
       - IMAP_PORT=143
-      - IMAP_USER=bitwarden
-      - IMAP_PASSWORD=T3st@pi2o24
-      - API_URL=http://192.168.100.117:3000/send-message
-      - RECIPIENT_ID=120363374129473581@g.us
+      - IMAP_USER=your_mail_user
+      - IMAP_PASSWORD=your_mail_password
+      - API_URL=http:your_api_url
+      - RECIPIENT_ID=your_wa_api_number
