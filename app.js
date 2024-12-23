@@ -3,12 +3,12 @@ const { simpleParser } = require('mailparser');
 const axios = require('axios');
 
 // Environment variables
-const IMAP_SERVER = process.env.IMAP_SERVER || '172.16.0.1';
+const IMAP_SERVER = process.env.IMAP_SERVER || 'your_imap_server';
 const IMAP_PORT = process.env.IMAP_PORT || 143;
-const IMAP_USER = process.env.IMAP_USER || 'bitwarden';
-const IMAP_PASSWORD = process.env.IMAP_PASSWORD || 'T3st@pi2o24';
-const API_URL = process.env.API_URL || 'http://172.16.0.1:3000/send-message';
-const RECIPIENT_ID = process.env.RECIPIENT_ID || '120363374129473581@g.us';
+const IMAP_USER = process.env.IMAP_USER || 'your_mail_user';
+const IMAP_PASSWORD = process.env.IMAP_PASSWORD || 'your_mail_password';
+const API_URL = process.env.API_URL || 'ypur_api_url';
+const RECIPIENT_ID = process.env.RECIPIENT_ID || 'your_wa_api_number';
 
 // Create IMAP client
 const imap = new Imap({
