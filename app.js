@@ -16,8 +16,8 @@ const imap = new Imap({
   password: IMAP_PASSWORD,
   host: IMAP_SERVER,
   port: IMAP_PORT,
-  tls: true,
-  tlsOptions: { rejectUnauthorized: false }
+  tls: false,
+  autotls: false
 });
 
 // Function to send email to API
