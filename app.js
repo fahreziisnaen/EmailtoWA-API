@@ -59,7 +59,7 @@ function startImapListener() {
         console.error('Error opening inbox:', err);
         return;
       }
-      console.log('Connected to IMAP server');
+      console.log('Connected to IMAP server and listening for new emails...');
 
       // Listen for new emails
       imap.on('mail', () => {
@@ -83,26 +83,17 @@ function startImapListener() {
           });
         });
       });
-
-      // Enable IDLE mode
-      imap.idle();
     });
   });
 
   imap.once('error', (err) => {
     console.error('IMAP Error:', err);
-    setTimeout(() => {
-      console.log('Reconnecting...');
-      startImapListener();
-    }, 30000);
+    imap.connect();
   });
 
   imap.once('end', () => {
-    console.log('Connection ended');
-    setTimeout(() => {
-      console.log('Reconnecting...');
-      startImapListener();
-    }, 30000);
+    console.log('Connection ended, reconnecting...');
+    imap.connect();
   });
 
   imap.connect();
