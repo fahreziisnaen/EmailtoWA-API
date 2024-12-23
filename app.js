@@ -7,8 +7,8 @@ const IMAP_SERVER = process.env.IMAP_SERVER || '172.16.0.1';
 const IMAP_PORT = process.env.IMAP_PORT || 143;
 const IMAP_USER = process.env.IMAP_USER || 'bitwarden';
 const IMAP_PASSWORD = process.env.IMAP_PASSWORD || 'T3st@pi2o24';
-const API_URL = 'http://192.168.100.117:3000/send-message';
-const RECIPIENT_ID = '120363374129473581@g.us';
+const API_URL = process.env.API_URL || 'http://172.16.0.1:3000/send-message';
+const RECIPIENT_ID = process.env.RECIPIENT_ID || '120363374129473581@g.us';
 
 // Create IMAP client
 const imap = new Imap({
@@ -19,6 +19,9 @@ const imap = new Imap({
   tls: false,
   autotls: false
 });
+
+// Variable to store the last email timestamp
+let lastEmailTime = new Date();
 
 // Function to send email to API
 function sendEmailToApi(body) {
@@ -37,18 +40,26 @@ function sendEmailToApi(body) {
 }
 
 // Function to process new email
-function processNewEmail(stream) {
+function processNewEmail(stream, seqno) {
   simpleParser(stream, (err, parsed) => {
     if (err) {
       console.error('Error parsing email:', err);
       return;
     }
-    console.log('New email received at:', new Date().toISOString());
-    console.log('Subject:', parsed.subject);
-    console.log('From:', parsed.from.text);
-    console.log('Forwarding to API...');
 
-    sendEmailToApi(parsed.text);
+    // Check if email is newer than our last processed email
+    const emailDate = parsed.date || new Date();
+    if (emailDate > lastEmailTime) {
+      console.log('New email received at:', new Date().toISOString());
+      console.log('Subject:', parsed.subject);
+      console.log('From:', parsed.from.text);
+      console.log('Forwarding to API...');
+
+      sendEmailToApi(parsed.text);
+      lastEmailTime = emailDate;
+    } else {
+      console.log('Skipping older email:', parsed.subject);
+    }
   });
 }
 
@@ -60,6 +71,7 @@ function startImapListener() {
         return;
       }
       console.log('Connected to IMAP server and listening for new emails...');
+      console.log('Starting timestamp:', lastEmailTime.toISOString());
 
       // Listen for new emails
       imap.on('mail', () => {
@@ -72,13 +84,13 @@ function startImapListener() {
           if (results.length === 0) return;
 
           const f = imap.fetch(results, { bodies: '' });
-          f.on('message', (msg) => {
+          f.on('message', (msg, seqno) => {
             let stream = '';
             msg.on('body', (s) => {
               stream = s;
             });
             msg.once('end', () => {
-              processNewEmail(stream);
+              processNewEmail(stream, seqno);
             });
           });
         });
