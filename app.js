@@ -22,15 +22,17 @@ const imap = new Imap({
 
 // Function to send email to API
 function sendEmailToApi(body) {
+  console.log('Sending to API at:', new Date().toISOString());
   axios.post(API_URL, {
     message: body,
     id: RECIPIENT_ID
   })
   .then(response => {
-    console.log('Email sent to API:', response.data);
+    console.log('Successfully forwarded to API at:', new Date().toISOString());
+    console.log('API Response:', response.data);
   })
   .catch(error => {
-    console.error('Error sending email to API:', error);
+    console.error('Error forwarding to API:', error);
   });
 }
 
@@ -41,10 +43,10 @@ function processNewEmail(stream) {
       console.error('Error parsing email:', err);
       return;
     }
-    console.log('New email received:');
+    console.log('New email received at:', new Date().toISOString());
     console.log('Subject:', parsed.subject);
     console.log('From:', parsed.from.text);
-    console.log('Body:', parsed.text);
+    console.log('Forwarding to API...');
 
     sendEmailToApi(parsed.text);
   });
